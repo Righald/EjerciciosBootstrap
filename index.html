@@ -6,6 +6,7 @@
         </title>
 
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
         
     </head>
 
@@ -51,11 +52,56 @@
                 <p class="lead">This is a simple hero unit, a simple jumbotron-style component for calling extra attention to featured content or information.</p>
                 <hr class="my-4">
                 <p>It uses utility classes for typography and spacing to space content out within the larger container.</p>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                  Launch demo modal
-              </button>
               </div>
         </div>
+
+
+      <!-- CARD Y TABLE -->
+      <div class="row">
+        <div class="col-12">
+          <div class="card mb-4">
+            <div class="card-header">
+              Lista de usuarios registrados
+              <button type="button" data-toggle="modal" data-target="#exampleModal" class="btn btn-primary float-right">
+                Añadir usuario
+              </button>
+            </div>
+            <div class="card-body">
+              
+              <table class="table table-bordered table-striped" >
+              <thead class="thead-dark ">
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">First</th>
+                  <th scope="col">Last</th>
+                  <th scope="col">Handle</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">1</th>
+                  <td>Mark</td>
+                  <td>Otto</td>
+                  <td>@mdo</td>
+                </tr>
+                <tr>
+                  <th scope="row">2</th>
+                  <td>Jacob</td>
+                  <td>Thornton</td>
+                  <td>@fat</td>
+                </tr>
+                <tr>
+                  <th scope="row">3</th>
+                  <td>Larry</td>
+                  <td>the Bird</td>
+                  <td>@twitter</td>
+                </tr>
+              </tbody>
+            </table>
+            </div>
+          </div>
+        </div>
+      </div> 
 
         <!-- Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -126,16 +172,28 @@
 
     <script type="text/javascript">
 
+      function add()
+      {
+        $('#exampleModalLabel').text('Añadir usuario.');
+      }
+
+      function edit(target)
+      {
+        $('#exampleModalLabel').text('Editar usuario.');
+      }
+
       function validateForm()
       {
-          if($('#pass').val() == $('#pass2'))
+          if($('#pass').val() == $('#pass2').val())
           {
-            console.log('yes');
+            swal("Correcto", "sucess");
             return true;
           }
           else
           {
-            console.log('nel');
+            swal("Las contraseñas son distintas", "error");
+            $('#pass').addClass('is-invalid');
+            $('#pass2').addClass('is-invalid');
             return false;
           }
       }
