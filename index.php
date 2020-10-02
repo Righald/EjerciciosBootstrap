@@ -1,3 +1,9 @@
+<?php 
+  include "controllers/UserController.php";
+  $userController = new UserController();
+
+  $users = $userController->get(); 
+?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -56,52 +62,107 @@
         </div>
 
 
-      <!-- CARD Y TABLE -->
-      <div class="row">
-        <div class="col-12">
-          <div class="card mb-4">
-            <div class="card-header">
-              Lista de usuarios registrados
-              <button type="button" data-toggle="modal" data-target="#exampleModal" class="btn btn-primary float-right">
-                Añadir usuario
-              </button>
-            </div>
-            <div class="card-body">
-              
-              <table class="table table-bordered table-striped" >
-              <thead class="thead-dark ">
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">First</th>
-                  <th scope="col">Last</th>
-                  <th scope="col">Handle</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">1</th>
-                  <td>Mark</td>
-                  <td>Otto</td>
-                  <td>@mdo</td>
-                </tr>
-                <tr>
-                  <th scope="row">2</th>
-                  <td>Jacob</td>
-                  <td>Thornton</td>
-                  <td>@fat</td>
-                </tr>
-                <tr>
-                  <th scope="row">3</th>
-                  <td>Larry</td>
-                  <td>the Bird</td>
-                  <td>@twitter</td>
-                </tr>
-              </tbody>
-            </table>
-            </div>
+        <?php if (isset($_SESSION['status']) && $_SESSION['status'] == 'sucess' ): ?>
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Correcto</strong><?= $_SESSION['message'] ?>.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
           </div>
-        </div>
-      </div> 
+          <?php unset($_SESSION['status']); ?>
+        <?php endif ?>
+
+        <?php if (isset($_SESSION['status']) && $_SESSION['status'] == 'error' ): ?>
+          <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Error</strong><?= $_SESSION['message'] ?>.
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <?php unset($_SESSION['status']); ?>
+        <?php endif ?> 
+
+        <div class="row mt-5 ">
+          
+          <div class="col"> 
+          
+            <div class="card">
+              <div class="card-header">
+                
+                Tabla de usuarios registrados
+
+                <button onclick="add()" type="button" class="btn btn-primary float-right" data-toggle="modal" data-target="#exampleModal">
+                  Añadir usuario
+                </button>
+
+              </div>
+              <div class="card-body"> 
+                <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Apellidos</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php foreach($users as $user) ?>
+                  <tr>
+                    <th scope="row">
+                      <?= $user['id'] ?>
+                    </th>
+                    <td>
+                      <?= $user['nombre'] ?>
+                    </td>
+                    <td>
+                      <?= $user['apellidos'] ?>
+                    </td>
+                    <td>
+                      <a href="mailto:<?= $user['email'] ?>">
+                        <?= $user['email'] ?>
+                      </a>
+                    </td>
+                    <td>
+                      <?php if($user['estado']): ?>
+                        <span class="badge badge-success">
+                          ACTIVO
+                        </span>
+                      <?php endif ?>
+
+                      <?php if(!$user['estado']): ?>
+                        <span class="badge badge-success">
+                          INACTIVO
+                        </span>
+                      <?php endif ?>
+                    </td>
+
+                    <td>
+                      <div class="btn-group" role="group">
+                      <button id="btnGroupDrop1" type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Acciones
+                      </button>
+                      <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                        <a data-info="<?= json_encode($user)?>" onclick="edit(this)" class="dropdown-item" href="#" data-toggle="modal" data-target="#exampleModal">
+                          <i class="fa fa-pencil"></i> Editar
+                        </a>
+                        <a class="dropdown-item" onclick="remove(<?= $user['id'] ?>)" >
+                          <i class="fa fa-trash"></i> Eliminar
+                        </a>
+                      </div>
+                    </div>
+                    </td>
+                  </tr> 
+                </tbody>
+              </table> 
+              </div>
+            </div>
+
+          </div>
+
+        </div> 
 
         <!-- Modal -->
         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -120,14 +181,14 @@
                     <div class="form-group row">
                       <label class="col-sm-2 col-form-label">Nombre</label>
                       <div class="col-sm-10">
-                        <input id="nombre" name="nombre" type="text" class="form-control" >
+                        <input id="nombre" name="name" type="text" class="form-control" >
                       </div>
                     </div>
 
                     <div class="form-group row">
                       <label class="col-sm-2 col-form-label">Apellidos</label>
                       <div class="col-sm-10">
-                        <input id="apellidos" name="apellidos" type="text" class="form-control" >
+                        <input id="apellidos" name="last" type="text" class="form-control" >
                       </div>
                     </div>
 
@@ -151,11 +212,10 @@
                         <input type="password" id="pass2" name="pass2" class="form-control" id="inputPassword">
                       </div>
                   </div>
-
-
                 </div>
-
                 <div class="modal-footer">
+                  <input type="hidden" name="action" value="store">
+                  <input type="hidden" name="id">
                   <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                   <button type="submit" class="btn btn-primary">Save changes</button>
                 </div>
@@ -196,6 +256,26 @@
             $('#pass2').addClass('is-invalid');
             return false;
           }
+      }
+
+      function remove(id)
+      {
+        swal({
+          title: "",
+          text: "¿Desea eliminar el usuario?",
+          icon: "warning",
+          buttons: true,
+          dangerMode: true,
+        })
+        .then((willDelete) => {
+          if (willDelete) {
+            swal("Poof! Your imaginary file has been deleted!", {
+              icon: "success",
+            });
+          } else {
+            swal("Your imaginary file is safe!");
+          }
+        });
       }
 
     </script>
